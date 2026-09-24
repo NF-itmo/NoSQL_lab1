@@ -1,9 +1,40 @@
 services:
+  postgres:
+    image: postgres:13.3
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro,z
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d db -U $POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 2s
+    networks:
+      - postgres_net
+    ports:
+      - "5454:5432"
+
   backend:
     image: nosql-lab1-backend:latest
     deploy:
       restart_policy:
         condition: on-failure
+    environment:
+      POSTGRES_URL: postgresql://postgres:5432/db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      ETCD_URL: http://etcd:2379
+    networks:
+      - postgres_net
+      - etcd_net
     ports:
       - "8080:8080"
 
@@ -14,13 +45,20 @@ services:
       - "2379:2379" # для клиентов
       - "2380:2380" # для связи с кластером (надо ли?)
     volumes:
-      - etcd-data:/etcd-data
+      - etcd_data:/etcd-data
     command:
       - /usr/local/bin/etcd
       - --name=s1
       - --data-dir=/etcd-data
       - --initial-cluster-token=etcd-cluster-1
       - --initial-cluster-state=new
+    networks:
+      - etcd_net
 
 volumes:
-  etcd-data:
+  etcd_data:
+  postgres_data:
+
+networks:
+  postgres_net:
+  etcd_net:

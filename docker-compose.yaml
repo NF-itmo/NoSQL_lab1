@@ -1,0 +1,8 @@
+services:
+  backend:
+    image: nosql-lab1-backend:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8080:8080"

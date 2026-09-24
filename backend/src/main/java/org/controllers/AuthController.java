@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.controllers.DTO.AuthRequest;
 import org.controllers.DTO.RegisterRequest;
+import org.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,18 +19,26 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private final UserService userService;
+
+    public AuthController(
+            UserService userService
+    ) {
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(
             @RequestBody @Valid final AuthRequest request,
             final HttpServletResponse response
     ) {
-        throw new RuntimeException("Not implemented");
+        final String token = userService.login(
+                request.getLogin(),
+                request.getPassword()
+        );
+        response.addCookie(this.createJwtCookie(token));
 
-//        final String token = "fake-token";
-//        response.addCookie(this.createJwtCookie(token));
-//
-//        return ResponseEntity.ok(new HashMap<>());
+        return ResponseEntity.ok(new HashMap<>());
     }
 
     @PostMapping("/register")
@@ -37,15 +46,14 @@ public class AuthController {
             @RequestBody @Valid final RegisterRequest request,
             final HttpServletResponse response
     ) {
-        throw new RuntimeException("Not implemented");
-//        final String token = userService.register(
-//                request.getLogin(),
-//                request.getPassword(),
-//                request.getInviteCode()
-//        );
-//        response.addCookie(this.createJwtCookie(token));
-//
-//        return ResponseEntity.ok(new HashMap<>());
+        final String token = userService.register(
+                request.getLogin(),
+                request.getPassword(),
+                request.getInviteCode()
+        );
+        response.addCookie(this.createJwtCookie(token));
+
+        return ResponseEntity.ok(new HashMap<>());
     }
 
     @PostMapping("/validate")

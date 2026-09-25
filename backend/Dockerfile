@@ -7,7 +7,8 @@ COPY .mvn .mvn
 COPY ./ ./
 
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    ./mvnw -B -nsu dependency:go-offline && \
+    ./mvnw -B -nsu dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2,sharing=locked \
     ./mvnw clean package
 
 
@@ -17,6 +18,6 @@ WORKDIR /app
 
 COPY --from=build /build/backend/target/*.jar ./
 
-ENTRYPOINT ["exec", "java", "-jar", "backend-0.0.1.jar "]
+ENTRYPOINT ["java", "-jar", "backend-0.0.1.jar"]
 
 EXPOSE 8080 8080

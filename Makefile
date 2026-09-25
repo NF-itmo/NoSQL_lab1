@@ -1,5 +1,5 @@
 BACKEND_DOCKERFILE=./backend/Dockerfile 
-BACKEND_IMAGE_NAME=nosql-backend
+BACKEND_IMAGE_NAME=nosql-lab1-backend
 BACKEND_PATH=./backend
 
 COMPOSE=docker-compose.yaml

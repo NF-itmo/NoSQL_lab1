@@ -1,9 +1,11 @@
 package org.controllers;
 
 import jakarta.validation.Valid;
-import org.controllers.DTO.ConfirmOrderResponse;
 import org.controllers.DTO.CreateOrderRequest;
 import org.controllers.DTO.GetOrderResponse;
+import org.models.Order;
+import org.services.OrdersService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,36 +20,62 @@ import java.util.List;
 @RequestMapping("/orders")
 @PreAuthorize("isAuthenticated()")
 public class OrdersController {
+    private final OrdersService ordersService;
+
+    public OrdersController(
+            OrdersService ordersService
+    ) {
+        this.ordersService = ordersService;
+    }
+
     @GetMapping
     public List<GetOrderResponse> getOrders() {
-        throw new RuntimeException("Not implemented");
+        return ordersService.getAll().stream()
+                .map(order -> new GetOrderResponse(
+                        order.getId(),
+                        order.getBookId(),
+                        order.getExpiresAt()
+                ))
+                .toList();
     }
 
     @PostMapping
-    public GetOrderResponse createOrder(
+    public ResponseEntity<Void> createOrder(
             @RequestBody @Valid final CreateOrderRequest request
     ) {
-        throw new RuntimeException("Not implemented");
+        ordersService.create(request.getBookId());
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{orderId}")
     public GetOrderResponse getOrder(
-            @PathVariable String orderId
+            @PathVariable Integer orderId
     ) {
-        throw new RuntimeException("Not implemented");
+        final Order order = ordersService.getById(orderId);
+
+        return new GetOrderResponse(
+                order.getId(),
+                order.getBookId(),
+                order.getExpiresAt()
+        );
     }
 
     @PostMapping("/{orderId}/confirm")
-    public ConfirmOrderResponse confirmOrder(
-            @PathVariable String orderId
+    public ResponseEntity<Void> confirmOrder(
+            @PathVariable Integer orderId
     ) {
-        throw new RuntimeException("Not implemented");
+        ordersService.confirm(orderId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{orderId}/cancel")
-    public ConfirmOrderResponse cancelOrder(
+    public ResponseEntity<Void> cancelOrder(
             @PathVariable String orderId
     ) {
-        throw new RuntimeException("Not implemented");
+        ordersService.cancel(Integer.parseInt(orderId));
+
+        return ResponseEntity.noContent().build();
     }
 }

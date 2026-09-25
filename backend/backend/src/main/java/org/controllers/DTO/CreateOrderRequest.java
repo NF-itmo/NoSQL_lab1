@@ -5,6 +5,5 @@ import lombok.Getter;
 
 @Getter
 public class CreateOrderRequest {
-    @NotBlank(message = "Book id should be specified")
-    private String bookId;
+    private Integer bookId;
 }

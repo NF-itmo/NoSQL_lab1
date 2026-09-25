@@ -1,4 +1,4 @@
-package org.controllers.DTO;
+package org.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetBookItemResponse {
+public class Book {
     private Integer id;
     private String title;
     private String author;
     private String genre;
+    private String description;
     private Boolean available;
 }

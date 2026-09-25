@@ -9,7 +9,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 
 
-@SpringBootApplication()
+@SpringBootApplication(scanBasePackages = {
+        "org.config",
+        "org.controllers",
+        "org.repository",
+        "org.services"
+})
 @EntityScan(basePackageClasses = User.class)
 @Import({JwtFilterConfig.class, ObjectMapperConfig.class, EtcdClientConfig.class})
 public class Main {

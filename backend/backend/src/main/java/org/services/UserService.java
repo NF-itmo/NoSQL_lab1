@@ -28,7 +28,7 @@ public class UserService {
 
     public String register(String login, String password, String inviteCode) {
         if (!inviteCode.equals(this.inviteCode)) {
-            log.warn("User {} tryied to pass invalid invite code {}", login, inviteCode);
+            log.warn("User {} tried to pass invalid invite code {}", login, inviteCode);
             throw new UnauthorizedException("Invalid invite code");
         }
         final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());

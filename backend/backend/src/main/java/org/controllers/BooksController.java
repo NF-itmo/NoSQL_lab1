@@ -15,7 +15,8 @@ import java.util.List;
 public class BooksController {
     @GetMapping
     public List<GetBookItemResponse> getBooks(
-            @RequestParam(required = false) String genre
+            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) Boolean available
     ) {
         throw new RuntimeException("Not implemented");
     }

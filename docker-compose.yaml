@@ -24,6 +24,9 @@ services:
 
   backend:
     image: nosql-lab1-backend:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
     deploy:
       restart_policy:
         condition: on-failure

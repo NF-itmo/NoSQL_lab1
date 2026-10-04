@@ -37,6 +37,7 @@ export function buildLoaders(options: BuildOptions): ModuleOptions['rules'] {
         loader: 'css-loader',
         options: {
             modules: {
+                namedExport: false,
                 localIdentName: isDev
                     ? '[path][name]__[local]'
                     : '[hash:base64:8]',

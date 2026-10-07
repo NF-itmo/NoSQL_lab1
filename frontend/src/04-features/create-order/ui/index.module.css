@@ -1,0 +1,16 @@
+.openButton {
+  padding: 1px 2px;
+
+  font-size: 1.2rem;
+  color: hsl(0, 0%, 40%);
+
+  background: transparent;
+  
+  border: none;
+  
+  cursor: pointer;
+  transition: color 0.2s ease-out, border-color 0.2s ease-out;
+}
+  .openButton:hover {
+    color: hsl(0, 0%, 90%);
+  }

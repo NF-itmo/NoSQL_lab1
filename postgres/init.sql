@@ -3,3 +3,8 @@ CREATE TABLE IF NOT EXISTS Users (
   username VARCHAR(60) UNIQUE NOT NULL,
   password_hash VARCHAR(60) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS User_settings (
+  username VARCHAR(60) PRIMARY KEY,
+  genre VARCHAR(100) NOT NULL
+);

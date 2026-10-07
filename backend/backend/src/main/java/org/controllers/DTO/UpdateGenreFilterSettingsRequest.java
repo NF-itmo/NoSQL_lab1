@@ -1,10 +1,10 @@
 package org.controllers.DTO;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
 public class UpdateGenreFilterSettingsRequest {
-    @NotBlank(message = "Genre should be specified")
+    @Size(max = 100, message = "Genre should be shorter than 100 characters")
     private String genre;
 }

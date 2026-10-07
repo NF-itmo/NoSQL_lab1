@@ -40,12 +40,16 @@ public class OrdersController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createOrder(
+    public ResponseEntity<GetOrderResponse> createOrder(
             @RequestBody @Valid final CreateOrderRequest request
     ) {
-        ordersService.create(request.getBookId());
+        final Order order = ordersService.create(request.getBookId());
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new GetOrderResponse(
+                order.getId(),
+                order.getBookId(),
+                order.getExpiresAt()
+        ));
     }
 
     @GetMapping("/{orderId}")

@@ -50,8 +50,8 @@ public class OrdersService {
         }
     }
 
-    public void create(Integer bookId) {
-        ordersRepository.createOrderByBookId(
+    public Order create(Integer bookId) {
+        return ordersRepository.createOrderByBookId(
                 bookId
         ).join();
     }

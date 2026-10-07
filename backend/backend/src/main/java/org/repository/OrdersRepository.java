@@ -79,18 +79,24 @@ public class OrdersRepository {
         return kvClient.delete(key).thenApply(response -> null);
     }
 
-    public CompletableFuture<Void> createOrderByBookId(Integer bookId) {
+    public CompletableFuture<Order> createOrderByBookId(Integer bookId) {
         final ByteSequence key = ByteSequence.from(ORDERS_KEY_PREFIX + bookId, UTF_8);
         final ByteSequence value = serializeOrder(bookId);
 
-        return leaseClient.grant(orderTtlSeconds).thenCompose(leaseGrantResponse -> kvClient.put(
-                        key,
-                        value,
-                        PutOption.builder()
-                                .withLeaseId(leaseGrantResponse.getID())
-                                .build()
-                ))
-                .thenApply(putResponse -> null);
+        return leaseClient.grant(orderTtlSeconds).thenCompose(leaseGrantResponse ->
+                kvClient.put(
+                                key,
+                                value,
+                                PutOption.builder()
+                                        .withLeaseId(leaseGrantResponse.getID())
+                                        .build()
+                        )
+                        .thenApply(putResponse -> Order.builder()
+                                .id(bookId)
+                                .bookId(bookId)
+                                .expiresAt(Instant.now().plusSeconds(orderTtlSeconds))
+                                .build())
+        );
     }
 
     private ByteSequence serializeOrder(Integer bookId) {

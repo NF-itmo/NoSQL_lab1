@@ -1,5 +1,6 @@
 package org.services;
 
+import org.exceptions.ConflictException;
 import org.exceptions.NotFoundException;
 import org.models.Book;
 import org.repository.BooksRepository;
@@ -25,5 +26,24 @@ public class BooksService {
     public Book getById(Integer bookId) {
         return booksRepository.getById(bookId).join()
                 .orElseThrow(() -> new NotFoundException("Book not found"));
+    }
+
+    public Book create(Book book) {
+        if (!booksRepository.create(book).join()) {
+            throw new ConflictException("Book with this id already exists");
+        }
+
+        return book;
+    }
+
+    public void delete(Integer bookId) {
+        getById(bookId);
+        booksRepository.deleteById(bookId).join();
+    }
+
+    public void release(Integer bookId) {
+        if (!booksRepository.release(bookId).join()) {
+            throw new NotFoundException("Book not found");
+        }
     }
 }

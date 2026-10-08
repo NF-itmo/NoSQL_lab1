@@ -9,6 +9,8 @@ FRONTEND_PATH=.  # это плохо, очень плохо. как и всё ч
 COMPOSE=docker-compose.yaml
 ETCD_TEST_ENDPOINTS=http://localhost:2379,http://localhost:22379,http://localhost:32379
 
+all: run
+
 build-backend:
 	docker buildx build \
 		-f $(BACKEND_DOCKERFILE) \

@@ -36,12 +36,15 @@ services:
     networks:
       - postgres_net
       - etcd_net
+      - web_server_net
     ports:
       - "8080:8080"
 
   # На заметку: https://etcd.io/docs/v2.3/docker_guide/
   etcd1:
     image: quay.io/coreos/etcd:v3.5.0
+    ports:
+      - "2379:2379"
     volumes:
       - etcd1_data:/etcd-data
     command:
@@ -66,6 +69,8 @@ services:
 
   etcd2:
     image: quay.io/coreos/etcd:v3.5.0
+    ports:
+      - "22379:2379"
     volumes:
       - etcd2_data:/etcd-data
     command:
@@ -90,6 +95,8 @@ services:
 
   etcd3:
     image: quay.io/coreos/etcd:v3.5.0
+    ports:
+      - "32379:2379"
     volumes:
       - etcd3_data:/etcd-data
     command:
@@ -112,6 +119,14 @@ services:
     networks:
       - etcd_net
 
+  nginx:
+    image: nosql-lab1-frontend:latest
+    restart: on-failure
+    ports:
+      - "5450:5450"
+    networks:
+      - web_server_net
+
 volumes:
   etcd1_data:
   etcd2_data:
@@ -121,3 +136,4 @@ volumes:
 networks:
   postgres_net:
   etcd_net:
+  web_server_net:

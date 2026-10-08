@@ -1,0 +1,12 @@
+:root {
+  --bg-primary: #000;
+
+  --text-primary: #ebebeb;
+  --text-secondary: #bfbfbf;
+
+  --error-bg: #b9454e;
+  
+  --editor-border: oklch(50% 0 0);
+
+  font-size: 15px;
+}

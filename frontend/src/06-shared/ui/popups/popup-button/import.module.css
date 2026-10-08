@@ -1,0 +1,17 @@
+.popupButton {
+  background-color: hsl(0, 0%, 20%);
+
+  border-radius: 3px;
+  padding: 1px 10px 1px 10px;
+
+  font-size: 0.95rem;
+
+  text-align: center;
+  transition: 0.04s ease-in;
+
+  cursor: pointer;
+}
+  .popupButton:hover {
+    background-color: hsl(0, 0%, 40%);
+    transition: 0.07s ease-out;
+  }

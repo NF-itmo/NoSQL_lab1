@@ -1,0 +1,38 @@
+.book {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 4px;
+
+  min-width: 100%;
+  min-height: 50px;
+  padding: 10px;
+
+  color: var(--text-secondary);
+
+  background: transparent;
+  
+  border: 1px solid hsl(0, 0%, 28%);
+  border-radius: 4px;
+
+  cursor: pointer;
+  transition: border-color 0.07s ease-out, background-color 0.07s ease-out;
+}
+  .book:hover {
+    background: hsl(0, 0%, 12%);
+    border-color: hsl(0, 0%, 42%);
+  }
+  .bookTitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: var(--text-primary);
+  }
+  .bookFooter {
+    display: flex;
+    margin-top: auto;
+
+    color: hsl(0, 0%, 45%);
+    font-size: 0.85rem;
+  }

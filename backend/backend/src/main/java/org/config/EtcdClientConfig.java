@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EtcdClientConfig {
     @Bean(destroyMethod = "close")
-    public Client etcdClient(@Value("${etcd.endpoint}") String endpoint) {
-        return Client.builder().endpoints(endpoint).build();
+    public Client etcdClient(@Value("${etcd.endpoints}") String endpoints) {
+        return Client.builder()
+                .endpoints(endpoints.split(","))
+                .build();
     }
 }

@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { initializeBooks, useBooks, type BookFilters } from "@/05-models/book";
 import {
-  getGenreFilterSettings,
-  updateGenreFilterSettings,
-} from "@/05-models/user-settings";
+  getBook,
+  initializeBooks,
+  useBooks,
+  type Book,
+  type BookFilters
+} from "@/05-models/book";
+import { getGenreFilterSettings, updateGenreFilterSettings } from "@/05-models/user-settings";
 import { RequestError } from "@/06-shared/api/request";
 import { useErrorNotify } from "@/06-shared/lib/errorNotifier";
 import { BooksFilter } from "@/04-features/books-filter";
@@ -15,7 +18,7 @@ import styles from "./index.module.css";
 export const BooksFeed = () => {
   const books = useBooks();
   const [filters, setFilters] = useState<BookFilters>({});
-  const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const genreWasChanged = useRef<boolean>(false);
   const showError = useErrorNotify();
@@ -66,6 +69,14 @@ export const BooksFeed = () => {
     setFilters(newFilters);
   };
 
+  const showBookDetails = async (bookId: number) => {
+    try {
+      setSelectedBook(await getBook(bookId));
+    } catch (error) {
+      showError(error);
+    }
+  };
+
   const filteredBooks = books
     .filter(
       (book) => !filters.genre || book.genre.toLowerCase().includes(filters.genre.toLowerCase())
@@ -73,8 +84,6 @@ export const BooksFeed = () => {
     .filter(
       (book) => filters.available === undefined || book.available === filters.available
     );
-
-  const selectedBook = books.find((book) => book.id === selectedBookId) ?? null;
 
   return (
     <section className={styles.feed}>
@@ -102,7 +111,7 @@ export const BooksFeed = () => {
             <ShowBookItem
               key={book.id}
               book={book}
-              onClick={() => setSelectedBookId(book.id)}
+              onClick={() => showBookDetails(book.id)}
             />
           ))
         }
@@ -110,7 +119,7 @@ export const BooksFeed = () => {
 
       <BookPopup
         book={selectedBook}
-        onClose={() => setSelectedBookId(null)}
+        onClose={() => setSelectedBook(null)}
       />
     </section>
   );

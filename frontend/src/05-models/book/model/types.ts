@@ -5,6 +5,7 @@ export type Book = {
   genre: string;
   description: string;
   available: boolean;
+  views: number;
 };
 
 export type BookListItem = Omit<Book, "description">;
@@ -14,4 +15,4 @@ export type BookFilters = {
   available?: boolean;
 };
 
-export type CreateBookRequest = Omit<Book, "available">;
+export type CreateBookRequest = Omit<Book, "available" | "views">;

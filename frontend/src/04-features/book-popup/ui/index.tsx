@@ -69,6 +69,7 @@ export const BookPopup = ({ book, onClose }: Props) => {
       <p>Автор: {book.author}</p>
       <p>Жанр: {book.genre}</p>
       <p>Статус: {book.available ? "доступна" : "выдана"}</p>
+      <p>Просмотры: {book.views}</p>
       <div className={styles.description}>
         <p>Описание:</p>
         <p>{book.description}</p>

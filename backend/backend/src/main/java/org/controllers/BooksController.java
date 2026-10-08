@@ -39,6 +39,7 @@ public class BooksController {
                 .genre(request.getGenre())
                 .description(request.getDescription())
                 .available(true)
+                .views(0L)
                 .build());
 
         return ResponseEntity.ok(
@@ -60,7 +61,7 @@ public class BooksController {
     public GetBookResponse getBook(
             @PathVariable Integer bookId
     ) {
-        final Book book = booksService.getById(bookId);
+        final Book book = booksService.getDetailsById(bookId);
 
         return toResponse(book);
     }
@@ -92,7 +93,8 @@ public class BooksController {
                 book.getAuthor(),
                 book.getGenre(),
                 book.getDescription(),
-                book.getAvailable()
+                book.getAvailable(),
+                book.getViews()
         );
     }
 }

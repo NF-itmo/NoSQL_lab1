@@ -16,4 +16,5 @@ public class GetBookResponse {
     private String genre;
     private String description;
     private Boolean available;
+    private Long views;
 }

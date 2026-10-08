@@ -28,6 +28,13 @@ public class BooksService {
                 .orElseThrow(() -> new NotFoundException("Book not found"));
     }
 
+    public Book getDetailsById(Integer bookId) {
+        final Book book = getById(bookId);
+        book.setViews(booksRepository.incrementViews(bookId).join());
+
+        return book;
+    }
+
     public Book create(Book book) {
         if (!booksRepository.create(book).join()) {
             throw new ConflictException("Book with this id already exists");

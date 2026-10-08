@@ -27,7 +27,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class BooksRepository {
     private static final String BOOKS_DATA_KEY_PREFIX = "/books/data/";
     private static final String BOOKS_AVAILABILITY_KEY_PREFIX = "/books/availability/";
+    private static final String BOOKS_VIEWS_KEY_PREFIX = "/books/views/";
     private static final ByteSequence AVAILABLE_VALUE = ByteSequence.from("true", UTF_8);
+    private static final ByteSequence ZERO_VIEWS_VALUE = ByteSequence.from("0", UTF_8);
 
     private final KV kvClient;
     private final ObjectMapper objectMapper;
@@ -74,13 +76,18 @@ public class BooksRepository {
                 BOOKS_AVAILABILITY_KEY_PREFIX + book.getId(),
                 UTF_8
         );
+        final ByteSequence viewsKey = ByteSequence.from(
+                BOOKS_VIEWS_KEY_PREFIX + book.getId(),
+                UTF_8
+        );
         final ByteSequence value = serializeBook(book);
 
         return kvClient.txn()
                 .If(new Cmp(dataKey, Cmp.Op.EQUAL, CmpTarget.version(0)))
                 .Then(
                         Op.put(dataKey, value, PutOption.DEFAULT),
-                        Op.put(availabilityKey, AVAILABLE_VALUE, PutOption.DEFAULT)
+                        Op.put(availabilityKey, AVAILABLE_VALUE, PutOption.DEFAULT),
+                        Op.put(viewsKey, ZERO_VIEWS_VALUE, PutOption.DEFAULT)
                 )
                 .commit()
                 .thenApply(TxnResponse::isSucceeded);
@@ -95,11 +102,16 @@ public class BooksRepository {
                 BOOKS_AVAILABILITY_KEY_PREFIX + bookId,
                 UTF_8
         );
+        final ByteSequence viewsKey = ByteSequence.from(
+                BOOKS_VIEWS_KEY_PREFIX + bookId,
+                UTF_8
+        );
 
         return kvClient.txn()
                 .Then(
                         Op.delete(dataKey, DeleteOption.DEFAULT),
-                        Op.delete(availabilityKey, DeleteOption.DEFAULT)
+                        Op.delete(availabilityKey, DeleteOption.DEFAULT),
+                        Op.delete(viewsKey, DeleteOption.DEFAULT)
                 )
                 .commit()
                 .thenApply(response -> null);
@@ -122,6 +134,42 @@ public class BooksRepository {
                 .thenApply(TxnResponse::isSucceeded);
     }
 
+    public CompletableFuture<Long> incrementViews(Integer bookId) {
+        final ByteSequence viewsKey = ByteSequence.from(
+                BOOKS_VIEWS_KEY_PREFIX + bookId,
+                UTF_8
+        );
+
+        return incrementViews(viewsKey);
+    }
+
+    private CompletableFuture<Long> incrementViews(ByteSequence viewsKey) {
+        return kvClient.get(viewsKey).thenCompose(response -> {
+            final boolean counterExists = !response.getKvs().isEmpty();
+            final long views = counterExists ? Long.parseLong(response.getKvs().get(0).getValue().toString(UTF_8)) : 0L;
+            final long nextViews = views + 1;
+            final Cmp counterDidNotChange = counterExists
+                    ? new Cmp(
+                            viewsKey,
+                            Cmp.Op.EQUAL,
+                            CmpTarget.modRevision(response.getKvs().get(0).getModRevision())
+                    )
+                    : new Cmp(viewsKey, Cmp.Op.EQUAL, CmpTarget.version(0));
+
+            return kvClient.txn()
+                    .If(counterDidNotChange)
+                    .Then(Op.put(
+                            viewsKey,
+                            ByteSequence.from(Long.toString(nextViews), UTF_8),
+                            PutOption.DEFAULT
+                    ))
+                    .commit()
+                    .thenCompose(transaction -> transaction.isSucceeded()
+                            ? CompletableFuture.completedFuture(nextViews)
+                            : incrementViews(viewsKey));
+        });
+    }
+
     private CompletableFuture<Book> mapBook(KeyValue keyValue) {
         final Integer bookId = Integer.parseInt(keyValue.getKey()
                 .toString(UTF_8)
@@ -131,12 +179,22 @@ public class BooksRepository {
                 BOOKS_AVAILABILITY_KEY_PREFIX + bookId,
                 UTF_8
         );
+        final ByteSequence viewsKey = ByteSequence.from(
+                BOOKS_VIEWS_KEY_PREFIX + bookId,
+                UTF_8
+        );
 
-        return kvClient.get(availabilityKey).thenApply(response -> {
+        final var availabilityFuture = kvClient.get(availabilityKey);
+        final var viewsFuture = kvClient.get(viewsKey);
+
+        return availabilityFuture.thenCombine(viewsFuture, (availability, views) -> {
             final Book book = deserializeBook(bookJson);
             book.setId(bookId);
-            book.setAvailable(!response.getKvs().isEmpty()
-                    && Boolean.parseBoolean(response.getKvs().get(0).getValue().toString(UTF_8)));
+            book.setAvailable(!availability.getKvs().isEmpty()
+                    && Boolean.parseBoolean(availability.getKvs().get(0).getValue().toString(UTF_8)));
+            book.setViews(views.getKvs().isEmpty()
+                    ? 0L
+                    : Long.parseLong(views.getKvs().get(0).getValue().toString(UTF_8)));
 
             return book;
         });

@@ -16,4 +16,5 @@ public class Book {
     private String genre;
     private String description;
     private Boolean available;
+    private Long views;
 }

@@ -7,6 +7,7 @@ FRONTEND_IMAGE_NAME=nosql-lab1-frontend
 FRONTEND_PATH=.  # это плохо, очень плохо. как и всё что сделано в этом проекте
 
 COMPOSE=docker-compose.yaml
+ETCD_TEST_ENDPOINTS=http://localhost:2379,http://localhost:22379,http://localhost:32379
 
 build-backend:
 	docker buildx build \
@@ -20,3 +21,9 @@ build-frontend:
 
 run: build-backend build-frontend
 	docker compose -f ${COMPOSE} up --force-recreate
+
+test-etcd-conflicts:
+	docker compose -f $(COMPOSE) up -d --wait etcd1 etcd2 etcd3
+	cd $(BACKEND_PATH) && \
+		ETCD_ENDPOINTS=$(ETCD_TEST_ENDPOINTS) \
+		./mvnw -q -pl backend -Dtest=EtcdConcurrentWritesIT test

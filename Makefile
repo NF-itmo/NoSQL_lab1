@@ -6,7 +6,7 @@ FRONTEND_DOCKERFILE=./nginx/Dockerfile
 FRONTEND_IMAGE_NAME=nosql-lab1-frontend
 FRONTEND_PATH=.  # это плохо, очень плохо. как и всё что сделано в этом проекте
 
-COMPOSE=docker-compose.yaml
+COMPOSE=docker-compose.dev.yaml
 ETCD_TEST_ENDPOINTS=http://localhost:2379,http://localhost:22379,http://localhost:32379
 
 all: run

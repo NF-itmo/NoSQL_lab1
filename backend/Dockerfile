@@ -17,7 +17,8 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 COPY --from=build /build/backend/target/*.jar ./
+COPY --chmod=755  ./entrypoint.sh ./entrypoint.sh
 
-ENTRYPOINT ["java", "-jar", "backend-0.0.1.jar"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 EXPOSE 8080 8080

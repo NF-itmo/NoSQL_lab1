@@ -150,10 +150,10 @@ public class BooksRepository {
             final long nextViews = views + 1;
             final Cmp counterDidNotChange = counterExists
                     ? new Cmp(
-                            viewsKey,
-                            Cmp.Op.EQUAL,
-                            CmpTarget.modRevision(response.getKvs().get(0).getModRevision())
-                    )
+                    viewsKey,
+                    Cmp.Op.EQUAL,
+                    CmpTarget.modRevision(response.getKvs().get(0).getModRevision())
+            )
                     : new Cmp(viewsKey, Cmp.Op.EQUAL, CmpTarget.version(0));
 
             return kvClient.txn()

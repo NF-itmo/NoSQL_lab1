@@ -1,0 +1,33 @@
+.pagination {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+
+  margin-top: 16px;
+}
+  .button {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px 10px;
+
+    font-size: 1.2rem;
+    color: var(--text-primary);
+
+    background: transparent;
+    border: none;
+
+    cursor: pointer;
+  }
+    .button:hover:not(:disabled) {
+      background: hsl(0, 0%, 15%);
+    }
+    .button:disabled {
+      color: var(--text-secondary);
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+  .currentPage {
+    color: var(--text-secondary);
+    text-align: center;
+  }

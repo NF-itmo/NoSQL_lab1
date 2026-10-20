@@ -9,7 +9,6 @@
   .button {
     min-width: 32px;
     min-height: 32px;
-    padding: 4px 10px;
 
     font-size: 1.2rem;
     color: var(--text-primary);
@@ -19,9 +18,6 @@
 
     cursor: pointer;
   }
-    .button:hover:not(:disabled) {
-      background: hsl(0, 0%, 15%);
-    }
     .button:disabled {
       color: var(--text-secondary);
       cursor: not-allowed;

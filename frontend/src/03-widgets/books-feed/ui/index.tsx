@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   getBook,
-  initializeBooks,
+  loadBooks,
   useBooks,
   type Book,
   type BookFilters
@@ -14,20 +14,17 @@ import { BookPopup } from "@/04-features/book-popup";
 import { CreateBook } from "@/04-features/create-book";
 import { ShowBookItem } from "@/04-features/show-book-item";
 import styles from "./index.module.css";
+import { Pagination } from "@/06-shared/ui/pagination";
+import { BOOKS_PER_PAGE } from "../config/paginationConfig";
 
 export const BooksFeed = () => {
   const books = useBooks();
   const [filters, setFilters] = useState<BookFilters>({});
+  const [page, setPage] = useState<number>(0);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const genreWasChanged = useRef<boolean>(false);
   const showError = useErrorNotify();
-
-  useEffect(() => {
-    initializeBooks()
-      .catch(showError)
-      .finally(() => setIsLoading(false));
-  }, []);
 
   useEffect(() => {
     getGenreFilterSettings()
@@ -61,12 +58,41 @@ export const BooksFeed = () => {
     return () => window.clearTimeout(timeout);
   }, [filters.genre]);
 
+  useEffect(() => {
+    let active = true;
+    setIsLoading(true);
+
+    const timeout = window.setTimeout(() => {
+      loadBooks(
+        filters,
+        page * BOOKS_PER_PAGE,
+        BOOKS_PER_PAGE + 1,
+      )
+        .catch((error) => {
+          if (active){
+            showError(error);
+          }
+        })
+        .finally(() => {
+          if (active){
+            setIsLoading(false);
+          }
+        });
+    }, 300);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timeout);
+    };
+  }, [filters, page]);
+
   const changeFilters = (newFilters: BookFilters) => {
     if (newFilters.genre !== filters.genre) {
       genreWasChanged.current = true;
     }
 
     setFilters(newFilters);
+    setPage(0);
   };
 
   const showBookDetails = async (bookId: number) => {
@@ -77,13 +103,8 @@ export const BooksFeed = () => {
     }
   };
 
-  const filteredBooks = books
-    .filter(
-      (book) => !filters.genre || book.genre.toLowerCase().includes(filters.genre.toLowerCase())
-    )
-    .filter(
-      (book) => filters.available === undefined || book.available === filters.available
-    );
+  const hasNextPage = books.length > BOOKS_PER_PAGE;
+  const visibleBooks = books.slice(0, BOOKS_PER_PAGE);
 
   return (
     <section className={styles.feed}>
@@ -101,13 +122,13 @@ export const BooksFeed = () => {
           )
         }
         {
-          (!isLoading && filteredBooks.length === 0) && (
+          (!isLoading && visibleBooks.length === 0) && (
             <p className={styles.message}>Книги не найдены</p>
           )
         }
 
         {
-          filteredBooks.map((book) => (
+          !isLoading && visibleBooks.map((book) => (
             <ShowBookItem
               key={book.id}
               book={book}
@@ -116,6 +137,17 @@ export const BooksFeed = () => {
           ))
         }
       </div>
+
+      {
+        (page > 0 || hasNextPage) && (
+          <Pagination
+            page={page}
+            hasNextPage={hasNextPage}
+            onPrevious={() => setPage((current) => Math.max(current - 1, 0))}
+            onNext={() => setPage((current) => current + 1)}
+          />
+        )
+      }
 
       <BookPopup
         book={selectedBook}

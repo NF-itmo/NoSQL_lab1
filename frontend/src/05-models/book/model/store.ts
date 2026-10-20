@@ -1,9 +1,8 @@
 import { useSyncExternalStore } from "react";
 import { getBooks } from "../api/books-api";
-import type { Book } from "./types";
+import type { Book, BookFilters } from "./types";
 
 let books: Book[] = [];
-let initialization: Promise<void> | null = null;
 const listeners = new Set<() => void>();
 
 const notify = () => {
@@ -22,20 +21,15 @@ const getSnapshot = () => books;
 
 export const useBooks = () => useSyncExternalStore(subscribe, getSnapshot);
 
-export const initializeBooks = (): Promise<void> => {
-  if (!initialization) {
-    initialization = getBooks()
-      .then((loadedBooks) => {
-        books = loadedBooks;
-        notify();
-      })
-      .catch((error) => {
-        initialization = null;
-        throw error;
-      });
-  }
+export const loadBooks = async (
+  filters: BookFilters,
+  start: number,
+  limit: number,
+): Promise<void> => {
+  const loadedBooks = await getBooks(filters, start, limit);
 
-  return initialization;
+  books = loadedBooks;
+  notify();
 };
 
 export const addBook = (book: Book) => {

@@ -13,7 +13,10 @@ services:
       - nosql1_postgres_password
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro,z
+    configs:
+      - source: init-sql
+        target: /docker-entrypoint-initdb.d/init.sql
+        mode: 0444
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d db -U $$(cat /run/secrets/nosql1_postgres_user)"]
       timeout: 1s
@@ -136,3 +139,7 @@ networks:
   postgres_net:
   etcd_net:
   web_server_net:
+
+configs:
+  init-sql:
+    file: ./postgres/init.sql

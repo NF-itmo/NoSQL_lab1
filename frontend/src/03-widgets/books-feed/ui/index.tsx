@@ -138,16 +138,12 @@ export const BooksFeed = () => {
         }
       </div>
 
-      {
-        (page > 0 || hasNextPage) && (
-          <Pagination
-            page={page}
-            hasNextPage={hasNextPage}
-            onPrevious={() => setPage((current) => Math.max(current - 1, 0))}
-            onNext={() => setPage((current) => current + 1)}
-          />
-        )
-      }
+      <Pagination
+        page={page}
+        hasNextPage={hasNextPage}
+        onPrevious={() => setPage((current) => Math.max(current - 1, 0))}
+        onNext={() => setPage((current) => current + 1)}
+      />
 
       <BookPopup
         book={selectedBook}

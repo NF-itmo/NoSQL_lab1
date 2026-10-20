@@ -24,7 +24,7 @@ import java.util.concurrent.CompletionException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Repository
-public class BooksRepository {
+public class BooksCacheRepository {
     private static final String BOOKS_DATA_KEY_PREFIX = "/books/data/";
     private static final String BOOKS_AVAILABILITY_KEY_PREFIX = "/books/availability/";
     private static final String BOOKS_VIEWS_KEY_PREFIX = "/books/views/";
@@ -34,7 +34,7 @@ public class BooksRepository {
     private final KV kvClient;
     private final ObjectMapper objectMapper;
 
-    public BooksRepository(Client client, ObjectMapper objectMapper) {
+    public BooksCacheRepository(Client client, ObjectMapper objectMapper) {
         this.kvClient = client.getKVClient();
         this.objectMapper = objectMapper;
     }

@@ -27,20 +27,25 @@ public class BooksService {
         this.booksRepository = booksRepository;
     }
 
-    public List<Book> getAll(String genre, Boolean available) {
+    public List<Book> getAll(
+            Integer start,
+            Integer limit,
+            String genre,
+            Boolean available
+    ) {
         final Optional<List<Book>> cacheResult = booksSearchCacheRepository.get(
                 genre,
                 available,
-                0,
-                50
+                start,
+                limit
         ).join();
 
         if (cacheResult.isPresent()) {
             return cacheResult.get();
         }
 
-        List<Book> result = booksRepository.search(genre, available, 0, 50);
-        booksSearchCacheRepository.put(genre, available, 0, 50, result).join();
+        List<Book> result = booksRepository.search(genre, available, start, limit);
+        booksSearchCacheRepository.put(genre, available, start, limit, result).join();
 
         return result;
     }

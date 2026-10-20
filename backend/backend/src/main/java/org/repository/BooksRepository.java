@@ -2,10 +2,15 @@ package org.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.models.Book;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,14 +34,32 @@ public class BooksRepository {
                 .getResultList();
     }
 
-    public List<Book> getByNameFragment(String nameFragment, Integer start, Integer limit) {
+    public List<Book> search(
+            String genreFragment,
+            Boolean availabilityStatus,
+            Integer start,
+            Integer limit
+    ) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Book> query = builder.createQuery(Book.class);
+        final Root<Book> book = query.from(Book.class);
+        final List<Predicate> filters = new ArrayList<>();
+
+        if (genreFragment != null && !genreFragment.isBlank()) {
+            filters.add(builder.like(
+                    builder.lower(book.get("genre")),
+                    "%" + genreFragment.trim().toLowerCase() + "%"
+            ));
+        }
+        if (availabilityStatus != null) {
+            filters.add(builder.equal(book.get("available"), availabilityStatus));
+        }
+        query.where(filters);
+
+        query.orderBy(builder.asc(book.get("id")));
+
         return entityManager
-                .createQuery("""
-                        SELECT book FROM Book book
-                        WHERE LOWER(book.title) LIKE CONCAT('%', LOWER(:fragment), '%')
-                        ORDER BY book.id ASC
-                """, Book.class)
-                .setParameter("fragment", nameFragment)
+                .createQuery(query)
                 .setFirstResult(start)
                 .setMaxResults(limit)
                 .getResultList();

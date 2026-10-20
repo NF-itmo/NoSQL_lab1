@@ -31,7 +31,4 @@ public class Book {
 
     @Column(name = "available", nullable = false)
     private Boolean available;
-
-    @Column(name = "views", nullable = false)
-    private Long views;
 }

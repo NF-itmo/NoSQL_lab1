@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS Books (
   author TEXT NOT NULL CHECK length(trim(author)) > 0,
   genre TEXT NOT NULL CHECK length(trim(genre)) > 0,
   description TEXT,
-  available BOOLEAN NOT NULL,
-  views BIGINT NOT NULL
+  available BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS User_settings (

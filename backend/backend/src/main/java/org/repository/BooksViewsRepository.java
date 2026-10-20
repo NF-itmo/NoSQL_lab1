@@ -3,36 +3,25 @@ package org.repository;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.KV;
-import io.etcd.jetcd.KeyValue;
-import io.etcd.jetcd.kv.TxnResponse;
 import io.etcd.jetcd.op.Cmp;
 import io.etcd.jetcd.op.CmpTarget;
 import io.etcd.jetcd.op.Op;
-import io.etcd.jetcd.options.GetOption;
-import io.etcd.jetcd.options.DeleteOption;
 import io.etcd.jetcd.options.PutOption;
-import org.models.Book;
 import org.springframework.stereotype.Repository;
-import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Repository
-public class BooksCacheRepository {
+public class BooksViewsRepository {
     private static final String BOOKS_VIEWS_KEY_PREFIX = "/books/views/";
 
     private final KV kvClient;
-    private final ObjectMapper objectMapper;
 
-    public BooksCacheRepository(Client client, ObjectMapper objectMapper) {
+    public BooksViewsRepository(Client client) {
         this.kvClient = client.getKVClient();
-        this.objectMapper = objectMapper;
     }
 
     public CompletableFuture<Long> incrementViews(Integer bookId) {

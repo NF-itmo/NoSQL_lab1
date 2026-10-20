@@ -31,4 +31,7 @@ public class Book {
 
     @Column(name = "available", nullable = false)
     private Boolean available;
+
+    @Transient
+    private Long views;
 }

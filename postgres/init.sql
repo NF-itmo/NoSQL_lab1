@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS Users (
 
 CREATE TABLE IF NOT EXISTS Books (
   id INTEGER PRIMARY KEY,
-  title TEXT NOT NULL CHECK length(trim(title)) > 0,
-  author TEXT NOT NULL CHECK length(trim(author)) > 0,
-  genre TEXT NOT NULL CHECK length(trim(genre)) > 0,
+  title TEXT NOT NULL CHECK (length(trim(title)) > 0),
+  author TEXT NOT NULL CHECK (length(trim(author)) > 0),
+  genre TEXT NOT NULL CHECK (length(trim(genre)) > 0),
   description TEXT,
   available BOOLEAN NOT NULL
 );

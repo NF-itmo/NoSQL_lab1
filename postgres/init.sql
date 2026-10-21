@@ -13,6 +13,14 @@ CREATE TABLE IF NOT EXISTS Books (
   available BOOLEAN NOT NULL
 );
 
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE INDEX IF NOT EXISTS idx_books_title_fts
+  ON Books USING GIN (lower(title) gin_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS idx_books_availabillity
+  ON Books (available, id);
+
 CREATE TABLE IF NOT EXISTS User_settings (
   username VARCHAR(60) PRIMARY KEY,
   title_filter VARCHAR(100) NOT NULL

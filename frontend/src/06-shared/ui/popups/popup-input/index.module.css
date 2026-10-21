@@ -1,0 +1,43 @@
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+  .input {
+    width: 100%;
+    outline: none;
+    background: transparent;
+
+    border: 1px hsl(0, 0%, 40%) solid;
+    border-radius: 5px;
+
+    height: 2.2rem;
+
+    padding: 0.2rem 0.4rem 0.2rem 0.4rem;
+    color: white;
+
+    transition: 0.04s ease-in;
+  }
+    .input:focus, .input:hover {
+      border: 1px var(--text-secondary) solid;
+      transition: 0.07s ease-out;
+    }
+    .input:focus + .inputLabel, .input:hover + .inputLabel {
+      color: var(--text-secondary);
+      transition: 0.07s ease-out;
+    }
+  .inputLabel {
+    position: absolute;
+    top: -0.5rem;
+    left: 1rem;
+
+    font-size: 0.75rem;
+
+    color: hsl(0, 0%, 40%);
+    background: hsl(0, 0%, 5%);
+
+    padding: 0 5px 0px 5px;
+    margin: 0px;
+
+    transition: 0.04s ease-in;
+  }
+    

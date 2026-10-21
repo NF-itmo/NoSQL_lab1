@@ -1,0 +1,39 @@
+.textareaWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 7px;
+  resize: vertical;
+  color: var(--text-primary);
+  font: inherit;
+  background: transparent;
+  border: 1px solid hsl(0, 0%, 40%);
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.07s ease-out;
+}
+
+.textarea:focus,
+.textarea:hover {
+  border-color: var(--text-secondary);
+}
+
+.textarea:focus + .textareaLabel,
+.textarea:hover + .textareaLabel {
+  color: var(--text-secondary);
+}
+
+.textareaLabel {
+  position: absolute;
+  top: -0.5rem;
+  left: 1rem;
+  padding: 0 5px;
+  color: hsl(0, 0%, 40%);
+  font-size: 0.75rem;
+  background: hsl(0, 0%, 5%);
+  transition: color 0.07s ease-out;
+}

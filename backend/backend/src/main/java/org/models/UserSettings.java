@@ -20,6 +20,6 @@ public class UserSettings {
     @Column(name = "username", nullable = false, length = 60)
     private String username;
 
-    @Column(name = "genre", nullable = false, length = 100)
-    private String genre;
+    @Column(name = "title_filter", nullable = false, length = 100)
+    private String titleFilter;
 }

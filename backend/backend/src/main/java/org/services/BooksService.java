@@ -30,11 +30,11 @@ public class BooksService {
     public List<Book> getAll(
             Integer start,
             Integer limit,
-            String genre,
+            String title,
             Boolean available
     ) {
         final Optional<List<Book>> cacheResult = booksSearchCacheRepository.get(
-                genre,
+                title,
                 available,
                 start,
                 limit
@@ -44,8 +44,8 @@ public class BooksService {
             return cacheResult.get();
         }
 
-        List<Book> result = booksRepository.search(genre, available, start, limit);
-        booksSearchCacheRepository.put(genre, available, start, limit, result).join();
+        List<Book> result = booksRepository.search(title, available, start, limit);
+        booksSearchCacheRepository.put(title, available, start, limit, result).join();
 
         return result;
     }

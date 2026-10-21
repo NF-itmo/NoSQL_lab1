@@ -49,12 +49,12 @@ public class BooksController {
 
     @GetMapping
     public List<GetBookResponse> getBooks(
-            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) String title,
             @RequestParam(required = false) Boolean available,
             @RequestParam(required = false, defaultValue = "0") Integer start,
             @RequestParam(required = false, defaultValue = "20") Integer limit
     ) {
-        return booksService.getAll(start, limit, genre, available).stream()
+        return booksService.getAll(start, limit, title, available).stream()
                 .map(this::toResponse)
                 .toList();
     }

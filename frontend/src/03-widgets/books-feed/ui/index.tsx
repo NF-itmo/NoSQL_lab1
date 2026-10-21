@@ -6,7 +6,7 @@ import {
   type Book,
   type BookFilters
 } from "@/05-models/book";
-import { getGenreFilterSettings, updateGenreFilterSettings } from "@/05-models/user-settings";
+import { getTitleFilterSettings, updateTitleFilterSettings } from "@/05-models/user-settings";
 import { RequestError } from "@/06-shared/api/request";
 import { useErrorNotify } from "@/06-shared/lib/errorNotifier";
 import { BooksFilter } from "@/04-features/books-filter";
@@ -23,16 +23,16 @@ export const BooksFeed = () => {
   const [page, setPage] = useState<number>(0);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const genreWasChanged = useRef<boolean>(false);
+  const titleWasChanged = useRef<boolean>(false);
   const showError = useErrorNotify();
 
   useEffect(() => {
-    getGenreFilterSettings()
+    getTitleFilterSettings()
       .then((settings) => {
-        if (!genreWasChanged.current) {
+        if (!titleWasChanged.current) {
           setFilters((current) => ({
             ...current,
-            genre: settings.genre || undefined,
+            title: settings.title || undefined,
           }));
         }
       })
@@ -44,10 +44,10 @@ export const BooksFeed = () => {
   }, []);
 
   useEffect(() => {
-    if (!genreWasChanged.current) return;
+    if (!titleWasChanged.current) return;
 
     const timeout = window.setTimeout(() => {
-      updateGenreFilterSettings(filters.genre ?? "")
+      updateTitleFilterSettings(filters.title ?? "")
         .catch((error) => {
           if (!(error instanceof RequestError && (error.status === 401 || error.status === 403))) {
             showError(error);
@@ -56,7 +56,7 @@ export const BooksFeed = () => {
     }, 500);
 
     return () => window.clearTimeout(timeout);
-  }, [filters.genre]);
+  }, [filters.title]);
 
   useEffect(() => {
     let active = true;
@@ -87,8 +87,8 @@ export const BooksFeed = () => {
   }, [filters, page]);
 
   const changeFilters = (newFilters: BookFilters) => {
-    if (newFilters.genre !== filters.genre) {
-      genreWasChanged.current = true;
+    if (newFilters.title !== filters.title) {
+      titleWasChanged.current = true;
     }
 
     setFilters(newFilters);

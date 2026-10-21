@@ -35,7 +35,7 @@ public class BooksRepository {
     }
 
     public List<Book> search(
-            String genreFragment,
+            String titleFragment,
             Boolean availabilityStatus,
             Integer start,
             Integer limit
@@ -45,10 +45,10 @@ public class BooksRepository {
         final Root<Book> book = query.from(Book.class);
         final List<Predicate> filters = new ArrayList<>();
 
-        if (genreFragment != null && !genreFragment.isBlank()) {
+        if (titleFragment != null && !titleFragment.isBlank()) {
             filters.add(builder.like(
-                    builder.lower(book.get("genre")),
-                    "%" + genreFragment.trim().toLowerCase() + "%"
+                    builder.lower(book.get("title")),
+                    "%" + titleFragment.trim().toLowerCase() + "%"
             ));
         }
         if (availabilityStatus != null) {

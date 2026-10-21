@@ -1,6 +1,6 @@
 package org.services;
 
-import org.models.GenreFilterSettings;
+import org.models.TitleFilterSettings;
 import org.models.UserSettings;
 import org.repository.SettingsCacheRepository;
 import org.repository.UserSettingsRepository;
@@ -19,33 +19,33 @@ public class SettingsService {
         this.settingsCacheRepository = settingsCacheRepository;
     }
 
-    public GenreFilterSettings getGenreFilterSettings(String username) {
+    public TitleFilterSettings getTitleFilterSettings(String username) {
         final var cachedSettings = settingsCacheRepository.getByUsername(username).join();
 
         if (cachedSettings.isPresent()) {
             return cachedSettings.get();
         }
 
-        final GenreFilterSettings settings = userSettingsRepository.getByUsername(username)
-                .map(value -> new GenreFilterSettings(value.getGenre()))
-                .orElseGet(() -> new GenreFilterSettings(null));
+        final TitleFilterSettings settings = userSettingsRepository.getByUsername(username)
+                .map(value -> new TitleFilterSettings(value.getTitleFilter()))
+                .orElseGet(() -> new TitleFilterSettings(null));
 
-        if (settings.getGenre() != null) {
+        if (settings.getTitle() != null) {
             settingsCacheRepository.put(username, settings).join();
         }
 
         return settings;
     }
 
-    public GenreFilterSettings updateGenreFilterSettings(String username, String genre) {
-        final String normalizedGenre = genre == null ? "" : genre;
+    public TitleFilterSettings updateTitleFilterSettings(String username, String title) {
+        final String normalizedTitle = title == null ? "" : title;
 
         userSettingsRepository.save(UserSettings.builder()
                 .username(username)
-                .genre(normalizedGenre)
+                .titleFilter(normalizedTitle)
                 .build());
 
-        final GenreFilterSettings settings = new GenreFilterSettings(normalizedGenre);
+        final TitleFilterSettings settings = new TitleFilterSettings(normalizedTitle);
         settingsCacheRepository.put(username, settings).join();
 
         return settings;

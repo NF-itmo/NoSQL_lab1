@@ -12,8 +12,8 @@ export const BooksFilter = (
     onChange
   }: props
 ) => {
-  const changeGenre = (genre: string) => {
-    onChange({ ...filters, genre: genre || undefined });
+  const changeTitle = (title: string) => {
+    onChange({ ...filters, title: title || undefined });
   };
 
   const changeAvailability = (available: string) => {
@@ -26,11 +26,11 @@ export const BooksFilter = (
   return (
     <div className={styles.filters}>
       <label className={styles.field}>
-        <span>Жанр</span>
+        <span>Название</span>
         <input
-          placeholder="Любой"
-          value={filters.genre ?? ""}
-          onChange={(event) => changeGenre(event.target.value)}
+          placeholder="Любое"
+          value={filters.title ?? ""}
+          onChange={(event) => changeTitle(event.target.value)}
         />
       </label>
 

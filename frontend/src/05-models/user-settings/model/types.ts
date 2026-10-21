@@ -1,3 +1,3 @@
-export type GenreFilterSettings = {
-  genre: string | null;
+export type TitleFilterSettings = {
+  title: string | null;
 };

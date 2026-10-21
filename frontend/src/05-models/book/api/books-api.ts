@@ -14,8 +14,8 @@ export const getBooks = async (
   searchParams.set("start", String(start));
   searchParams.set("limit", String(limit));
 
-  if (filters.genre) {
-    searchParams.set("genre", filters.genre);
+  if (filters.title) {
+    searchParams.set("title", filters.title);
   }
 
   if (filters.available !== undefined) {

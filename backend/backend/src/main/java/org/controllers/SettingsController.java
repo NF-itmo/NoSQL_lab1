@@ -1,8 +1,8 @@
 package org.controllers;
 
 import jakarta.validation.Valid;
-import org.controllers.DTO.GetGenreFilterSettingsResponse;
-import org.controllers.DTO.UpdateGenreFilterSettingsRequest;
+import org.controllers.DTO.GetTitleFilterSettingsResponse;
+import org.controllers.DTO.UpdateTitleFilterSettingsRequest;
 import org.services.SettingsService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,23 +22,23 @@ public class SettingsController {
         this.settingsService = settingsService;
     }
 
-    @GetMapping("/genre-filter")
-    public GetGenreFilterSettingsResponse getGenreFilterSettings(Authentication authentication) {
-        final var settings = settingsService.getGenreFilterSettings(authentication.getName());
+    @GetMapping("/title-filter")
+    public GetTitleFilterSettingsResponse getTitleFilterSettings(Authentication authentication) {
+        final var settings = settingsService.getTitleFilterSettings(authentication.getName());
 
-        return new GetGenreFilterSettingsResponse(settings.getGenre());
+        return new GetTitleFilterSettingsResponse(settings.getTitle());
     }
 
-    @PutMapping("/genre-filter")
-    public GetGenreFilterSettingsResponse updateGenreFilterSettings(
-            @RequestBody @Valid final UpdateGenreFilterSettingsRequest request,
+    @PutMapping("/title-filter")
+    public GetTitleFilterSettingsResponse updateTitleFilterSettings(
+            @RequestBody @Valid final UpdateTitleFilterSettingsRequest request,
             Authentication authentication
     ) {
-        final var settings = settingsService.updateGenreFilterSettings(
+        final var settings = settingsService.updateTitleFilterSettings(
                 authentication.getName(),
-                request.getGenre()
+                request.getTitle()
         );
 
-        return new GetGenreFilterSettingsResponse(settings.getGenre());
+        return new GetTitleFilterSettingsResponse(settings.getTitle());
     }
 }

@@ -45,13 +45,13 @@ public class BooksSearchCacheRepository {
     }
 
     public CompletableFuture<Void> put(
-            String genreFragment,
+            String titleFragment,
             Boolean availabilityStatus,
             Integer start,
             Integer limit,
             List<Book> books
     ) {
-        final ByteSequence key = searchKey(genreFragment, availabilityStatus, start, limit);
+        final ByteSequence key = searchKey(titleFragment, availabilityStatus, start, limit);
         final ByteSequence value = serializeBooks(books);
 
         return leaseClient.grant(cacheTtlSeconds)
@@ -64,13 +64,13 @@ public class BooksSearchCacheRepository {
     }
 
     public CompletableFuture<Optional<List<Book>>> get(
-            String genreFragment,
+            String titleFragment,
             Boolean availabilityStatus,
             Integer start,
             Integer limit
     ) {
         final ByteSequence key = searchKey(
-                genreFragment,
+                titleFragment,
                 availabilityStatus,
                 start,
                 limit
@@ -95,13 +95,13 @@ public class BooksSearchCacheRepository {
     }
 
     private ByteSequence searchKey(
-            String genreFragment,
+            String titleFragment,
             Boolean availabilityStatus,
             Integer start,
             Integer limit
     ) {
         final SearchQuery query = new SearchQuery(
-                SearchQuery.normalizeGenre(genreFragment),
+                SearchQuery.normalizeTitle(titleFragment),
                 availabilityStatus,
                 start,
                 limit
@@ -139,7 +139,7 @@ public class BooksSearchCacheRepository {
     }
 
     private record SearchQuery(
-            String genreFragment,
+            String titleFragment,
             Boolean availabilityStatus,
             Integer start,
             Integer limit
@@ -154,11 +154,11 @@ public class BooksSearchCacheRepository {
             }
         }
 
-        public static String normalizeGenre(String genreFragment) {
-            if (genreFragment == null || genreFragment.isBlank()) {
+        public static String normalizeTitle(String titleFragment) {
+            if (titleFragment == null || titleFragment.isBlank()) {
                 return null;
             }
-            return genreFragment.trim().toLowerCase();
+            return titleFragment.trim().toLowerCase();
         }
     }
 }

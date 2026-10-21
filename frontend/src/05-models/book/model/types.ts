@@ -11,7 +11,7 @@ export type Book = {
 export type BookListItem = Omit<Book, "description">;
 
 export type BookFilters = {
-  genre?: string;
+  title?: string;
   available?: boolean;
 };
 

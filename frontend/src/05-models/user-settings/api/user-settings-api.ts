@@ -1,15 +1,15 @@
 import { API_V1_PATH } from "@/06-shared/api/request/config";
 import { request } from "@/06-shared/api/request";
-import type { GenreFilterSettings } from "../model/types";
+import type { TitleFilterSettings } from "../model/types";
 
-const GENRE_FILTER_SETTINGS_API_PATH = `${API_V1_PATH}/settings/genre-filter`;
+const TITLE_FILTER_SETTINGS_API_PATH = `${API_V1_PATH}/settings/title-filter`;
 
-export const getGenreFilterSettings = (): Promise<GenreFilterSettings> =>
-  request<GenreFilterSettings>(GENRE_FILTER_SETTINGS_API_PATH);
+export const getTitleFilterSettings = (): Promise<TitleFilterSettings> =>
+  request<TitleFilterSettings>(TITLE_FILTER_SETTINGS_API_PATH);
 
-export const updateGenreFilterSettings = (genre: string): Promise<GenreFilterSettings> =>
-  request<GenreFilterSettings>(GENRE_FILTER_SETTINGS_API_PATH, {
+export const updateTitleFilterSettings = (title: string): Promise<TitleFilterSettings> =>
+  request<TitleFilterSettings>(TITLE_FILTER_SETTINGS_API_PATH, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ genre }),
+    body: JSON.stringify({ title }),
   });

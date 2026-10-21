@@ -1,4 +1,4 @@
-package org.models;
+package org.controllers.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenreFilterSettings {
-    private String genre;
+public class GetTitleFilterSettingsResponse {
+    private String title;
 }

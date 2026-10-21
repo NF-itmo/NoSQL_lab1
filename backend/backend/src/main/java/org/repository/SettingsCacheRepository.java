@@ -5,7 +5,7 @@ import io.etcd.jetcd.Client;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.Lease;
 import io.etcd.jetcd.options.PutOption;
-import org.models.GenreFilterSettings;
+import org.models.TitleFilterSettings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import tools.jackson.core.JacksonException;
@@ -19,7 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Repository
 public class SettingsCacheRepository {
-    private static final String SETTINGS_CACHE_KEY_PREFIX = "/cache/user-settings/";
+    private static final String SETTINGS_CACHE_KEY_PREFIX = "/cache/user-settings/title-filter/";
 
     private final KV kvClient;
     private final Lease leaseClient;
@@ -37,7 +37,7 @@ public class SettingsCacheRepository {
         this.cacheTtlSeconds = cacheTtlSeconds;
     }
 
-    public CompletableFuture<Optional<GenreFilterSettings>> getByUsername(String username) {
+    public CompletableFuture<Optional<TitleFilterSettings>> getByUsername(String username) {
         final ByteSequence key = key(username);
 
         return kvClient.get(key).thenApply(response -> {
@@ -50,7 +50,7 @@ public class SettingsCacheRepository {
         });
     }
 
-    public CompletableFuture<Void> put(String username, GenreFilterSettings settings) {
+    public CompletableFuture<Void> put(String username, TitleFilterSettings settings) {
         final ByteSequence key = key(username);
         final ByteSequence value = serialize(settings);
 
@@ -66,7 +66,7 @@ public class SettingsCacheRepository {
         return ByteSequence.from(SETTINGS_CACHE_KEY_PREFIX + username, UTF_8);
     }
 
-    private ByteSequence serialize(GenreFilterSettings settings) {
+    private ByteSequence serialize(TitleFilterSettings settings) {
         try {
             return ByteSequence.from(objectMapper.writeValueAsString(settings), UTF_8);
         } catch (JacksonException exception) {
@@ -74,9 +74,9 @@ public class SettingsCacheRepository {
         }
     }
 
-    private GenreFilterSettings deserialize(String settingsJson) {
+    private TitleFilterSettings deserialize(String settingsJson) {
         try {
-            return objectMapper.readValue(settingsJson, GenreFilterSettings.class);
+            return objectMapper.readValue(settingsJson, TitleFilterSettings.class);
         } catch (JacksonException exception) {
             throw new CompletionException("Failed to deserialize settings", exception);
         }

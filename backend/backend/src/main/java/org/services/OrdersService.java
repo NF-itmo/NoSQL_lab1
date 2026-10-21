@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.exceptions.ConflictException;
 import org.exceptions.NotFoundException;
 import org.models.Order;
-import org.repository.OrderConfirmationRepository;
 import org.repository.OrdersRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +13,11 @@ import java.util.List;
 @Slf4j
 public class OrdersService {
     private final OrdersRepository ordersRepository;
-    private final OrderConfirmationRepository orderConfirmationRepository;
 
     public OrdersService(
-            OrdersRepository ordersRepository,
-            OrderConfirmationRepository orderConfirmationRepository
+            OrdersRepository ordersRepository
     ) {
         this.ordersRepository = ordersRepository;
-        this.orderConfirmationRepository = orderConfirmationRepository;
     }
 
     public Order getById(Integer orderId) {
@@ -43,7 +39,7 @@ public class OrdersService {
 
     public void confirm(Integer orderId) {
         final Order order = getById(orderId);
-        final boolean confirmed = orderConfirmationRepository.confirm(orderId, order.getBookId()).join();
+        final boolean confirmed = ordersRepository.confirm(orderId, order.getBookId()).join();
 
         if (!confirmed) {
             throw new ConflictException("Book is unavailable or order has expired");

@@ -5,6 +5,11 @@ import io.etcd.jetcd.Client;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.Lease;
+import io.etcd.jetcd.kv.TxnResponse;
+import io.etcd.jetcd.op.Cmp;
+import io.etcd.jetcd.op.CmpTarget;
+import io.etcd.jetcd.op.Op;
+import io.etcd.jetcd.options.DeleteOption;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.LeaseOption;
 import io.etcd.jetcd.options.PutOption;
@@ -27,6 +32,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Slf4j
 public class OrdersRepository {
     private static final String ORDERS_KEY_PREFIX = "/orders/";
+    private static final String BOOKS_AVAILABILITY_KEY_PREFIX = "/books/availability/";
+    private static final ByteSequence AVAILABLE_VALUE = ByteSequence.from("true", UTF_8);
+    private static final ByteSequence UNAVAILABLE_VALUE = ByteSequence.from("false", UTF_8);
+
     private final KV kvClient;
     private final Lease leaseClient;
     private final ObjectMapper objectMapper;
@@ -97,6 +106,26 @@ public class OrdersRepository {
                                 .expiresAt(Instant.now().plusSeconds(orderTtlSeconds))
                                 .build())
         );
+    }
+
+    public CompletableFuture<Boolean> confirm(Integer orderId, Integer bookId) {
+        final ByteSequence orderKey = ByteSequence.from(ORDERS_KEY_PREFIX + orderId, UTF_8);
+        final ByteSequence availabilityKey = ByteSequence.from(
+                BOOKS_AVAILABILITY_KEY_PREFIX + bookId,
+                UTF_8
+        );
+
+        return kvClient.txn()
+                .If(
+                        new Cmp(orderKey, Cmp.Op.GREATER, CmpTarget.version(0)),
+                        new Cmp(availabilityKey, Cmp.Op.EQUAL, CmpTarget.value(AVAILABLE_VALUE))
+                )
+                .Then(
+                        Op.put(availabilityKey, UNAVAILABLE_VALUE, PutOption.DEFAULT),
+                        Op.delete(orderKey, DeleteOption.DEFAULT)
+                )
+                .commit()
+                .thenApply(TxnResponse::isSucceeded);
     }
 
     private ByteSequence serializeOrder(Integer bookId) {

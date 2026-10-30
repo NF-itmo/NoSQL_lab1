@@ -1,0 +1,41 @@
+.errorMessage {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+
+  background-color: var(--error-bg);
+  color: var(--text-primary);
+
+  padding: 15px 20px;
+
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+  z-index: 1000;
+
+  max-width: 350px;
+  
+  animation: notifySlideIn 0.3s ease-out, notifyFadeOut 0.5s ease-in 4.5s forwards;
+}
+
+/* Анимации */
+@keyframes notifySlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes notifyFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    display: none;
+  }
+}
